@@ -1,151 +1,122 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Austine's Poster Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Austine's Poster Studio | Randomizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;700&family=Playfair+Display:ital,wght@1,700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --dark: #1e293b; }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: var(--dark); }
+        :root { --primary: #2563eb; --dark: #0f172a; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-family: 'Oswald', sans-serif; font-size: 2.5rem; letter-spacing: 2px; margin: 0; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-family: 'Oswald', sans-serif; margin: 0; color: var(--dark); }
 
-        .container { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; max-width: 1200px; margin: 0 auto; }
+        .studio-layout { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1000px; }
 
-        /* Setup Panel */
-        .setup-panel { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 380px; }
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 10px; }
-        
-        .input-box { margin-bottom: 15px; }
-        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #64748b; }
-        input[type="text"], textarea, input[type="file"] { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
-        
-        .styling-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        /* Left Control Panel */
+        .panel { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 320px; }
+        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: #64748b; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; font-family: inherit; }
 
-        /* Preview Canvas */
-        .preview-box { 
-            position: relative; 
-            width: 400px; 
-            height: 550px; 
-            background: #e2e8f0; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+        /* The Magic Buttons */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .regen-btn { background: #8b5cf6; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .regen-btn:hover { background: #7c3aed; transform: scale(1.02); }
+        .save-btn { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
+
+        /* Right Preview Canvas */
+        .canvas { 
+            position: relative; width: 380px; height: 500px; 
+            background: #000; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            transition: all 0.5s ease;
         }
 
-        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        
-        /* The subject photo placement */
-        #subject-layer { 
-            position: absolute; 
-            bottom: 0; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 90%; 
-            z-index: 2; 
-            transition: bottom 0.2s;
-        }
+        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.8; }
+        #subject-layer { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 85%; z-index: 2; transition: 0.5s ease; }
 
-        .overlay { 
-            position: relative; 
-            z-index: 3; 
-            padding: 40px 30px; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.85)); 
-            color: white; 
-        }
-        #p-note { font-size: 1.1rem; line-height: 1.4; margin: 0; }
-        #p-name { font-family: 'Oswald', sans-serif; font-size: 2.5rem; margin: 5px 0 0 0; color: #00f3ff; }
-
-        .btn-save { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        .btn-save:hover { background: var(--primary); }
+        .text-box { position: relative; z-index: 3; padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; }
+        #p-note { font-size: 1rem; margin: 0; transition: 0.3s; }
+        #p-name { font-family: 'Oswald', sans-serif; font-size: 2.2rem; margin: 5px 0 0 0; transition: 0.3s; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>AUSTINE CREATIVES</h1>
-        <p>Professional Poster Engine</p>
+        <p>Hit regenerate for a new vibe</p>
     </div>
 
-    <div class="container">
-        <div class="setup-panel">
-            <div class="section-title">CONTENT</div>
-            <div class="input-box">
-                <label>Your Name</label>
-                <input type="text" id="nameIn" placeholder="e.g. AUSTINE" oninput="liveUpdate()">
-            </div>
-            <div class="input-box">
-                <label>Message/Quote</label>
-                <textarea id="noteIn" rows="2" placeholder="Write your note..." oninput="liveUpdate()"></textarea>
-            </div>
+    <div class="studio-layout">
+        <div class="panel">
+            <label>Full Name</label>
+            <input type="text" id="nameIn" placeholder="AUSTINE" oninput="updateText()">
+            
+            <label>Message</label>
+            <textarea id="noteIn" rows="2" placeholder="Your quote here..." oninput="updateText()"></textarea>
 
-            <div class="section-title">IMAGES</div>
-            <div class="input-box">
-                <label>Background Image</label>
-                <input type="file" accept="image/*" onchange="applyBg(event)">
-            </div>
-            <div class="input-box">
-                <label>Your Subject Photo (PNG recommended)</label>
-                <input type="file" accept="image/*" onchange="applySubject(event)">
-            </div>
+            <label>Your Photo</label>
+            <input type="file" accept="image/*" onchange="loadPhoto(event)">
 
-            <div class="section-title">ADJUSTMENTS</div>
-            <div class="styling-tools">
-                <div>
-                    <label>Text Color</label>
-                    <input type="color" id="colorIn" value="#00f3ff" oninput="liveUpdate()">
-                </div>
-                <div>
-                    <label>Photo Position</label>
-                    <input type="range" id="posIn" min="-50" max="100" value="0" oninput="liveUpdate()">
-                </div>
+            <div class="btn-group">
+                <button class="regen-btn" onclick="regenerateStyle()">✨ REGENERATE DESIGN</button>
+                <button class="save-btn" onclick="window.print()">Save as PDF</button>
             </div>
-            <button class="btn-save" onclick="window.print()">EXPORT AS PDF</button>
         </div>
 
-        <div class="preview-box" id="capture">
+        <div class="canvas" id="mainCanvas">
             <img id="bg-layer" src="">
             <img id="subject-layer" src="">
-            <div class="overlay">
-                <p id="p-note">Your inspiring message will appear here...</p>
+            <div class="text-box">
+                <p id="p-note">The goal is not to be perfect, but to be resilient.</p>
                 <h2 id="p-name">AUSTINE</h2>
             </div>
         </div>
     </div>
 
     <script>
-        function liveUpdate() {
-            const name = document.getElementById('nameIn').value;
-            const note = document.getElementById('noteIn').value;
-            const color = document.getElementById('colorIn').value;
-            const position = document.getElementById('posIn').value;
+        const fonts = ['Oswald', 'Inter', 'Playfair Display', 'Bebas Neue'];
+        const colors = ['#00f3ff', '#ff007b', '#f1c40f', '#2ecc71', '#ffffff', '#e67e22'];
+        const gradients = [
+            'linear-gradient(45deg, #0f172a, #1e293b)',
+            'linear-gradient(to bottom, #434343, #000000)',
+            'linear-gradient(to right, #000428, #004e92)',
+            'linear-gradient(135deg, #667eea, #764ba2)'
+        ];
 
-            document.getElementById('p-name').innerText = name || "AUSTINE";
-            document.getElementById('p-name').style.color = color;
-            document.getElementById('p-note').innerText = note || "Your inspiring message will appear here...";
-            document.getElementById('subject-layer').style.bottom = position + "px";
+        function updateText() {
+            document.getElementById('p-name').innerText = document.getElementById('nameIn').value || "AUSTINE";
+            document.getElementById('p-note').innerText = document.getElementById('noteIn').value || "The goal is not to be perfect, but to be resilient.";
         }
 
-        function applyBg(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('bg-layer').src = reader.result;
-            }
-            reader.readAsDataURL(event.target.files[0]);
+        function loadPhoto(event) {
+            const img = document.getElementById('subject-layer');
+            img.src = URL.createObjectURL(event.target.files[0]);
         }
 
-        function applySubject(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('subject-layer').src = reader.result;
-            }
-            reader.readAsDataURL(event.target.files[0]);
+        function regenerateStyle() {
+            const canvas = document.getElementById('mainCanvas');
+            const name = document.getElementById('p-name');
+            const subject = document.getElementById('subject-layer');
+
+            // 1. Random Background
+            canvas.style.background = gradients[Math.floor(Math.random() * gradients.length)];
+            
+            // 2. Random Text Style
+            name.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+            name.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 3. Random Photo Position
+            const randomBottom = Math.floor(Math.random() * 40);
+            subject.style.bottom = randomBottom + "px";
+
+            // Add a little "pop" effect
+            canvas.style.transform = "scale(1.02)";
+            setTimeout(() => canvas.style.transform = "scale(1)", 200);
         }
     </script>
 </body>
 </html>
+         
