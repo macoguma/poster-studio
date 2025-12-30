@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Austine's Poster Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --dark: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: var(--dark); }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-family: 'Oswald', sans-serif; font-size: 2.5rem; letter-spacing: 2px; margin: 0; }
+
+        .container { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; max-width: 1200px; margin: 0 auto; }
+
+        /* Setup Panel */
+        .setup-panel { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 380px; }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .input-box { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #64748b; }
+        input[type="text"], textarea, input[type="file"] { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
+        
+        .styling-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+        /* Preview Canvas */
+        .preview-box { 
+            position: relative; 
+            width: 400px; 
+            height: 550px; 
+            background: #e2e8f0; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        
+        /* The subject photo placement */
+        #subject-layer { 
+            position: absolute; 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 90%; 
+            z-index: 2; 
+            transition: bottom 0.2s;
+        }
+
+        .overlay { 
+            position: relative; 
+            z-index: 3; 
+            padding: 40px 30px; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.85)); 
+            color: white; 
+        }
+        #p-note { font-size: 1.1rem; line-height: 1.4; margin: 0; }
+        #p-name { font-family: 'Oswald', sans-serif; font-size: 2.5rem; margin: 5px 0 0 0; color: #00f3ff; }
+
+        .btn-save { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-save:hover { background: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>AUSTINE CREATIVES</h1>
+        <p>Professional Poster Engine</p>
+    </div>
+
+    <div class="container">
+        <div class="setup-panel">
+            <div class="section-title">CONTENT</div>
+            <div class="input-box">
+                <label>Your Name</label>
+                <input type="text" id="nameIn" placeholder="e.g. AUSTINE" oninput="liveUpdate()">
+            </div>
+            <div class="input-box">
+                <label>Message/Quote</label>
+                <textarea id="noteIn" rows="2" placeholder="Write your note..." oninput="liveUpdate()"></textarea>
+            </div>
+
+            <div class="section-title">IMAGES</div>
+            <div class="input-box">
+                <label>Background Image</label>
+                <input type="file" accept="image/*" onchange="applyBg(event)">
+            </div>
+            <div class="input-box">
+                <label>Your Subject Photo (PNG recommended)</label>
+                <input type="file" accept="image/*" onchange="applySubject(event)">
+            </div>
+
+            <div class="section-title">ADJUSTMENTS</div>
+            <div class="styling-tools">
+                <div>
+                    <label>Text Color</label>
+                    <input type="color" id="colorIn" value="#00f3ff" oninput="liveUpdate()">
+                </div>
+                <div>
+                    <label>Photo Position</label>
+                    <input type="range" id="posIn" min="-50" max="100" value="0" oninput="liveUpdate()">
+                </div>
+            </div>
+            <button class="btn-save" onclick="window.print()">EXPORT AS PDF</button>
+        </div>
+
+        <div class="preview-box" id="capture">
+            <img id="bg-layer" src="">
+            <img id="subject-layer" src="">
+            <div class="overlay">
+                <p id="p-note">Your inspiring message will appear here...</p>
+                <h2 id="p-name">AUSTINE</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function liveUpdate() {
+            const name = document.getElementById('nameIn').value;
+            const note = document.getElementById('noteIn').value;
+            const color = document.getElementById('colorIn').value;
+            const position = document.getElementById('posIn').value;
+
+            document.getElementById('p-name').innerText = name || "AUSTINE";
+            document.getElementById('p-name').style.color = color;
+            document.getElementById('p-note').innerText = note || "Your inspiring message will appear here...";
+            document.getElementById('subject-layer').style.bottom = position + "px";
+        }
+
+        function applyBg(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById('bg-layer').src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function applySubject(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById('subject-layer').src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
