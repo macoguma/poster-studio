@@ -1,76 +1,95 @@
-   <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Austine's Poster Studio | Randomizer</title>
+    <title>Austine's Poster Studio | Pro Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;700&family=Playfair+Display:ital,wght@1,700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --dark: #0f172a; }
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        :root { --primary: #8b5cf6; --dark: #0f172a; --slate: #64748b; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
         .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-family: 'Oswald', sans-serif; margin: 0; color: var(--dark); }
+        .header h1 { font-family: 'Oswald', sans-serif; font-size: 2.2rem; color: var(--dark); letter-spacing: 1px; }
 
-        .studio-layout { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1000px; }
+        .studio-layout { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; max-width: 1100px; width: 100%; }
 
-        /* Left Control Panel */
-        .panel { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 320px; }
-        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: #64748b; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; font-family: inherit; }
+        /* Control Panel */
+        .panel { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 350px; }
+        .group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 6px; color: var(--slate); text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; box-sizing: border-box; }
+        
+        .btn-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .regen-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .regen-btn:hover { background: #7c3aed; transform: translateY(-2px); }
+        .save-btn { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; }
 
-        /* The Magic Buttons */
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .regen-btn { background: #8b5cf6; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .regen-btn:hover { background: #7c3aed; transform: scale(1.02); }
-        .save-btn { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
-
-        /* Right Preview Canvas */
+        /* Preview Canvas */
         .canvas { 
-            position: relative; width: 380px; height: 500px; 
-            background: #000; border-radius: 12px; overflow: hidden; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative; width: 400px; height: 550px; 
+            background: #000; border-radius: 16px; overflow: hidden; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
             display: flex; flex-direction: column; justify-content: flex-end;
-            transition: all 0.5s ease;
+            transition: all 0.4s ease-in-out;
         }
 
-        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.8; }
-        #subject-layer { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 85%; z-index: 2; transition: 0.5s ease; }
+        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.9; }
+        #subject-layer { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 90%; z-index: 2; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .text-box { position: relative; z-index: 3; padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; }
-        #p-note { font-size: 1rem; margin: 0; transition: 0.3s; }
-        #p-name { font-family: 'Oswald', sans-serif; font-size: 2.2rem; margin: 5px 0 0 0; transition: 0.3s; }
+        .text-overlay { 
+            position: relative; z-index: 3; padding: 40px 30px; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; 
+        }
+        #p-note { font-size: 1.1rem; line-height: 1.4; margin: 0; font-weight: 400; }
+        #p-name { font-family: 'Oswald', sans-serif; font-size: 2.5rem; margin: 8px 0 0 0; color: #ffffff; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>AUSTINE CREATIVES</h1>
-        <p>Hit regenerate for a new vibe</p>
+        <p>Design, describe, and generate your vision.</p>
     </div>
 
     <div class="studio-layout">
         <div class="panel">
-            <label>Full Name</label>
-            <input type="text" id="nameIn" placeholder="AUSTINE" oninput="updateText()">
+            <div class="group">
+                <label>Name & Title</label>
+                <input type="text" id="nameIn" placeholder="AUSTINE" oninput="updateText()">
+            </div>
             
-            <label>Message</label>
-            <textarea id="noteIn" rows="2" placeholder="Your quote here..." oninput="updateText()"></textarea>
+            <div class="group">
+                <label>The Message</label>
+                <textarea id="noteIn" rows="2" placeholder="Inspiring words..." oninput="updateText()"></textarea>
+            </div>
 
-            <label>Your Photo</label>
-            <input type="file" accept="image/*" onchange="loadPhoto(event)">
+            <div class="group">
+                <label>Design Style Description</label>
+                <textarea id="styleDesc" rows="2" placeholder="e.g. Dark cinematic, bright and airy, neon vibes..."></textarea>
+            </div>
 
-            <div class="btn-group">
-                <button class="regen-btn" onclick="regenerateStyle()">✨ REGENERATE DESIGN</button>
-                <button class="save-btn" onclick="window.print()">Save as PDF</button>
+            <div class="group">
+                <label>Upload Custom Background</label>
+                <input type="file" id="bgInput" accept="image/*" onchange="loadBg(event)">
+            </div>
+
+            <div class="group">
+                <label>Upload Your Photo (Subject)</label>
+                <input type="file" accept="image/*" onchange="loadSubject(event)">
+            </div>
+
+            <div class="btn-stack">
+                <button class="regen-btn" onclick="regenerateStyle()">✨ REGENERATE VIBE</button>
+                <button class="save-btn" onclick="window.print()">Export Poster</button>
             </div>
         </div>
 
         <div class="canvas" id="mainCanvas">
             <img id="bg-layer" src="">
             <img id="subject-layer" src="">
-            <div class="text-box">
-                <p id="p-note">The goal is not to be perfect, but to be resilient.</p>
+            <div class="text-overlay">
+                <p id="p-note">Success is built one day at a time.</p>
                 <h2 id="p-name">AUSTINE</h2>
             </div>
         </div>
@@ -78,20 +97,26 @@
 
     <script>
         const fonts = ['Oswald', 'Inter', 'Playfair Display', 'Bebas Neue'];
-        const colors = ['#00f3ff', '#ff007b', '#f1c40f', '#2ecc71', '#ffffff', '#e67e22'];
-        const gradients = [
-            'linear-gradient(45deg, #0f172a, #1e293b)',
-            'linear-gradient(to bottom, #434343, #000000)',
-            'linear-gradient(to right, #000428, #004e92)',
-            'linear-gradient(135deg, #667eea, #764ba2)'
+        const colors = ['#ffffff', '#00f3ff', '#f1c40f', '#ff007b', '#2ecc71'];
+        const defaultGradients = [
+            'linear-gradient(45deg, #0f172a, #334155)',
+            'linear-gradient(to bottom, #1e1b4b, #312e81)',
+            'linear-gradient(to right, #450a0a, #7f1d1d)',
+            'linear-gradient(135deg, #064e3b, #065f46)'
         ];
 
         function updateText() {
             document.getElementById('p-name').innerText = document.getElementById('nameIn').value || "AUSTINE";
-            document.getElementById('p-note').innerText = document.getElementById('noteIn').value || "The goal is not to be perfect, but to be resilient.";
+            document.getElementById('p-note').innerText = document.getElementById('noteIn').value || "Success is built one day at a time.";
         }
 
-        function loadPhoto(event) {
+        function loadBg(event) {
+            const img = document.getElementById('bg-layer');
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.style.opacity = "1";
+        }
+
+        function loadSubject(event) {
             const img = document.getElementById('subject-layer');
             img.src = URL.createObjectURL(event.target.files[0]);
         }
@@ -100,23 +125,26 @@
             const canvas = document.getElementById('mainCanvas');
             const name = document.getElementById('p-name');
             const subject = document.getElementById('subject-layer');
+            const bgLayer = document.getElementById('bg-layer');
 
-            // 1. Random Background
-            canvas.style.background = gradients[Math.floor(Math.random() * gradients.length)];
+            // 1. If no custom BG is uploaded, randomize the gradient
+            if (!bgLayer.getAttribute('src')) {
+                canvas.style.background = defaultGradients[Math.floor(Math.random() * defaultGradients.length)];
+            }
             
-            // 2. Random Text Style
+            // 2. Randomize Text Design
             name.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
             name.style.color = colors[Math.floor(Math.random() * colors.length)];
             
-            // 3. Random Photo Position
-            const randomBottom = Math.floor(Math.random() * 40);
+            // 3. Randomize Photo Position (simulates different design layouts)
+            const randomBottom = Math.floor(Math.random() * 60);
             subject.style.bottom = randomBottom + "px";
 
-            // Add a little "pop" effect
+            // Visual feedback
             canvas.style.transform = "scale(1.02)";
             setTimeout(() => canvas.style.transform = "scale(1)", 200);
         }
     </script>
 </body>
 </html>
-         
+              
