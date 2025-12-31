@@ -1,156 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Austine's Design Suite | Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Playfair+Display:wght@900&family=Bebas+Neue&family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        body { background: #0b0e11; color: #fff; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1200px; width: 100%; }
-        
-        /* THE POSTER BOX */
-        #poster-canvas { 
-            width: 380px; height: 550px; background: #111; position: relative; 
-            overflow: hidden; border: 2px solid #333; display: flex; flex-direction: column;
+function savePoster() {
+    const poster = document.getElementById('poster-canvas');
+    const btn = document.querySelector('.btn-save');
+    btn.innerText = "CAPTURING HD...";
+
+    // Use html2canvas with high-performance settings
+    html2canvas(poster, {
+        scale: 4, // Forces 4K-level detail
+        useCORS: true,
+        logging: false,
+        backgroundColor: null, // Maintains transparency if any
+        imageTimeout: 0,
+        onclone: (clonedDoc) => {
+            // Ensures the image in the clone maintains its quality
+            const clonedImg = clonedDoc.getElementById('bg-image');
+            clonedImg.style.imageRendering = 'crisp-edges';
         }
-        /* Retains Pose & Posture */
-        #bg-image { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; top: 0; left: 0; }
-        
-        .text-overlay { 
-            position: absolute; inset: 0; display: flex; flex-direction: column; 
-            padding: 30px; z-index: 2; pointer-events: none;
-        }
-
-        /* EDITOR SIDEBAR */
-        .editor { background: #1a1f24; padding: 20px; border-radius: 15px; width: 380px; max-height: 90vh; overflow-y: auto; }
-        .editor h2 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .control-group { margin-bottom: 15px; border-bottom: 1px solid #2a2f35; padding-bottom: 10px; }
-        label { display: block; font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
-        input, textarea, select { width: 100%; padding: 8px; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-size: 0.85rem; }
-        .row { display: flex; gap: 10px; }
-
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
-        .btn-save { background: #00f3ff; color: #000; }
-        .btn-regen { background: #fff; color: #000; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div id="poster-canvas">
-            <img id="bg-image" src="https://via.placeholder.com/380x550/111/444?text=Upload+Subject" alt="Subject">
-            <div class="text-overlay" id="overlay">
-                <p id="display-name" style="margin:0;">AUSTINE</p>
-                <p id="display-text" style="margin:5px 0 0 0;">DESIGN VISION</p>
-            </div>
-        </div>
-
-        <div class="editor">
-            <h2>AUSTINE DESIGN SUITE</h2>
+    }).then(canvas => {
+        // Force highest quality PNG format
+        const link = document.createElement('a');
+        link.download = 'Austine_Pro_Design_HD.png';
+        link.href = canvas.toDataURL("image/png", 1.0); // 1.0 = 100% quality
+        link.click();
+        btn.innerText = "EXPORT IMAGE";
+    });
+}
             
-            <div class="control-group">
-                <label>Content</label>
-                <input type="text" id="inputName" value="AUSTINE" oninput="updateUI()">
-                <textarea id="inputText" oninput="updateUI()" style="margin-top:5px;">DESIGN VISION</textarea>
-            </div>
-
-            <div class="control-group">
-                <label>Typography & Style</label>
-                <select id="fontStyle" onchange="updateUI()">
-                    <option value="'Orbitron', sans-serif">Tech (Orbitron)</option>
-                    <option value="'Bebas Neue', sans-serif">Bold (Bebas)</option>
-                    <option value="'Playfair Display', serif">Classy (Playfair)</option>
-                    <option value="'Montserrat', sans-serif">Clean (Montserrat)</option>
-                </select>
-                <div class="row" style="margin-top:5px;">
-                    <input type="color" id="textColor" value="#00f3ff" oninput="updateUI()">
-                    <input type="number" id="fontSize" value="30" oninput="updateUI()" placeholder="Size">
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>Layout & Position</label>
-                <select id="textAlign" onchange="updateUI()">
-                    <option value="flex-end">Bottom</option>
-                    <option value="center">Middle</option>
-                    <option value="flex-start">Top</option>
-                </select>
-                <select id="textHAlign" onchange="updateUI()" style="margin-top:5px;">
-                    <option value="center">Center</option>
-                    <option value="flex-start">Left</option>
-                    <option value="flex-end">Right</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Background & Shadow</label>
-                <div class="row">
-                    <input type="color" id="bgColor" value="#000000" oninput="updateUI()">
-                    <select id="shadowStyle" onchange="updateUI()">
-                        <option value="none">No Shadow</option>
-                        <option value="0 0 10px rgba(0,0,0,0.8)">Soft Black</option>
-                        <option value="0 0 20px #00f3ff">Neon Glow</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>Upload Subject</label>
-                <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
-            </div>
-
-            <div class="button-group">
-                <button class="btn btn-regen" onclick="location.reload()">REGENERATE ALL</button>
-                <button class="btn btn-save" onclick="savePoster()">EXPORT IMAGE</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function updateUI() {
-            const overlay = document.getElementById('overlay');
-            const dName = document.getElementById('display-name');
-            const dText = document.getElementById('display-text');
-            const canvas = document.getElementById('poster-canvas');
-
-            // Update Text
-            dName.innerText = document.getElementById('inputName').value;
-            dText.innerText = document.getElementById('inputText').value;
-
-            // Update Style & Color
-            dName.style.fontFamily = document.getElementById('fontStyle').value;
-            dName.style.color = document.getElementById('textColor').value;
-            dText.style.fontSize = document.getElementById('fontSize').value + "px";
-            dText.style.textShadow = document.getElementById('shadowStyle').value;
-
-            // Update Layout
-            overlay.style.justifyContent = document.getElementById('textAlign').value;
-            overlay.style.alignItems = document.getElementById('textHAlign').value;
-            dText.style.textAlign = document.getElementById('textHAlign').value === 'center' ? 'center' : (document.getElementById('textHAlign').value === 'flex-start' ? 'left' : 'right');
-
-            // Update Background
-            canvas.style.backgroundColor = document.getElementById('bgColor').value;
-        }
-
-        function loadImage(event) {
-            const image = document.getElementById('bg-image');
-            if(event.target.files[0]) {
-                image.src = URL.createObjectURL(event.target.files[0]);
-            }
-        }
-
-        function savePoster() {
-            const poster = document.getElementById('poster-canvas');
-            html2canvas(poster, { scale: 3, useCORS: true }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'Austine_Pro_Design.png';
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        }
-    </script>
-</body>
-</html>
-    
