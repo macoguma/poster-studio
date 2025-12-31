@@ -3,119 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Austine's Poster Studio | Pro Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Playfair+Display:ital,wght@1,900&family=Bebas+Neue&family=Montserrat:wght@900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <title>Austine's Design Suite | Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Playfair+Display:wght@900&family=Bebas+Neue&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --accent: #00f3ff; }
-        body { background: #0b0e11; color: #e0e0e0; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1100px; width: 100%; }
+        body { background: #0b0e11; color: #fff; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1200px; width: 100%; }
         
         /* THE POSTER BOX */
         #poster-canvas { 
-            width: 350px; height: 500px; background: #000; position: relative; 
-            overflow: hidden; border: 4px solid #1a1f24; transition: all 0.5s ease;
+            width: 380px; height: 550px; background: #111; position: relative; 
+            overflow: hidden; border: 2px solid #333; display: flex; flex-direction: column;
         }
-        #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 1; top: 0; left: 0; filter: brightness(0.7); transition: 0.5s; }
+        /* Retains Pose & Posture */
+        #bg-image { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; top: 0; left: 0; }
         
-        .text-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 25px; z-index: 2; box-sizing: border-box; }
-        
-        /* FANCY STYLE 1: CYBERPUNK (Sleek) */
-        .style-sleek #display-name { color: var(--accent); font-family: 'Orbitron'; font-size: 1.1rem; letter-spacing: 4px; text-shadow: 0 0 10px var(--accent); }
-        .style-sleek #display-text { color: #fff; font-family: 'Montserrat'; font-size: 2rem; font-weight: 900; margin-top: 10px; text-transform: uppercase; line-height: 1; }
-        .style-sleek { background: linear-gradient(transparent, rgba(0, 243, 255, 0.25)); }
-
-        /* FANCY STYLE 2: VOGUE (Modern) */
-        .style-modern #display-name { color: #fff; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 6px; border-bottom: 1px solid #fff; padding-bottom: 8px; align-self: center; }
-        .style-modern #display-text { color: #fff; font-family: 'Playfair Display', serif; font-size: 2.6rem; font-style: italic; margin-top: 25px; text-align: center; }
-        .style-modern { background: rgba(0,0,0,0.5); justify-content: center !important; }
-
-        /* FANCY STYLE 3: URBAN (Impact) */
-        .style-impact #display-name { background: #ffcc00; color: #000; font-family: 'Bebas Neue'; font-size: 1.5rem; padding: 0 12px; align-self: flex-start; }
-        .style-impact #display-text { color: #fff; font-family: 'Bebas Neue'; font-size: 4rem; line-height: 0.85; margin-top: 5px; text-align: left; }
-        .style-impact { background: linear-gradient(45deg, rgba(0,0,0,0.8), transparent); }
-
-        /* FANCY STYLE 4: LUXURY (Elegant) */
-        .style-luxury #display-name { color: #d4af37; font-family: 'Montserrat'; font-size: 0.9rem; letter-spacing: 3px; }
-        .style-luxury #display-text { color: #fff; font-family: 'Dancing Script', cursive; font-size: 3rem; margin-top: 10px; }
-        .style-luxury { border: 15px solid #d4af37 !important; box-sizing: border-box; }
+        .text-overlay { 
+            position: absolute; inset: 0; display: flex; flex-direction: column; 
+            padding: 30px; z-index: 2; pointer-events: none;
+        }
 
         /* EDITOR SIDEBAR */
-        .editor { background: #1a1f24; padding: 25px; border-radius: 20px; width: 350px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-        h1 { font-family: 'Orbitron'; color: var(--accent); font-size: 1.1rem; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        label { display: block; margin: 15px 0 5px; font-size: 0.7rem; color: #888; font-weight: 700; text-transform: uppercase; }
-        input, textarea, select { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 10px; transition: 0.3s; }
-        input:focus { border-color: var(--accent); }
-        
-        .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; font-size: 0.85rem; }
-        .btn-save { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .editor { background: #1a1f24; padding: 20px; border-radius: 15px; width: 380px; max-height: 90vh; overflow-y: auto; }
+        .editor h2 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .control-group { margin-bottom: 15px; border-bottom: 1px solid #2a2f35; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-size: 0.85rem; }
+        .row { display: flex; gap: 10px; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
+        .btn-save { background: #00f3ff; color: #000; }
         .btn-regen { background: #fff; color: #000; }
-        .btn:hover { transform: scale(1.03); opacity: 0.9; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div id="poster-canvas" class="style-sleek">
-            <img id="bg-image" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Main Subject">
-            <div class="text-overlay" id="overlay-container">
-                <p id="display-name">AUSTINE</p>
-                <p id="display-text">DESIGN YOUR VISION</p>
+        <div id="poster-canvas">
+            <img id="bg-image" src="https://via.placeholder.com/380x550/111/444?text=Upload+Subject" alt="Subject">
+            <div class="text-overlay" id="overlay">
+                <p id="display-name" style="margin:0;">AUSTINE</p>
+                <p id="display-text" style="margin:5px 0 0 0;">DESIGN VISION</p>
             </div>
         </div>
 
         <div class="editor">
-            <h1>AUSTINE CREATIVES</h1>
+            <h2>AUSTINE DESIGN SUITE</h2>
             
-            <label>Name / Branding</label>
-            <input type="text" id="inputName" value="AUSTINE" oninput="updateUI()">
-            
-            <label>Main Text Content</label>
-            <textarea id="inputText" oninput="updateUI()">DESIGN YOUR VISION</textarea>
+            <div class="control-group">
+                <label>Content</label>
+                <input type="text" id="inputName" value="AUSTINE" oninput="updateUI()">
+                <textarea id="inputText" oninput="updateUI()" style="margin-top:5px;">DESIGN VISION</textarea>
+            </div>
 
-            <label>Style Description</label>
-            <textarea id="inputDesc" placeholder="e.g. Minimalist, gold border, high contrast..."></textarea>
+            <div class="control-group">
+                <label>Typography & Style</label>
+                <select id="fontStyle" onchange="updateUI()">
+                    <option value="'Orbitron', sans-serif">Tech (Orbitron)</option>
+                    <option value="'Bebas Neue', sans-serif">Bold (Bebas)</option>
+                    <option value="'Playfair Display', serif">Classy (Playfair)</option>
+                    <option value="'Montserrat', sans-serif">Clean (Montserrat)</option>
+                </select>
+                <div class="row" style="margin-top:5px;">
+                    <input type="color" id="textColor" value="#00f3ff" oninput="updateUI()">
+                    <input type="number" id="fontSize" value="30" oninput="updateUI()" placeholder="Size">
+                </div>
+            </div>
 
-            <label>Visual Style</label>
-            <select id="styleSelect" onchange="applyStyle()">
-                <option value="style-sleek">Cyberpunk (Neon Cyan)</option>
-                <option value="style-modern">Vogue (Serif Minimal)</option>
-                <option value="style-impact">Urban (Impact Gold)</option>
-                <option value="style-luxury">Luxury (Gold Border)</option>
-            </select>
-            
-            <label>Upload Photo</label>
-            <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
-            
+            <div class="control-group">
+                <label>Layout & Position</label>
+                <select id="textAlign" onchange="updateUI()">
+                    <option value="flex-end">Bottom</option>
+                    <option value="center">Middle</option>
+                    <option value="flex-start">Top</option>
+                </select>
+                <select id="textHAlign" onchange="updateUI()" style="margin-top:5px;">
+                    <option value="center">Center</option>
+                    <option value="flex-start">Left</option>
+                    <option value="flex-end">Right</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Background & Shadow</label>
+                <div class="row">
+                    <input type="color" id="bgColor" value="#000000" oninput="updateUI()">
+                    <select id="shadowStyle" onchange="updateUI()">
+                        <option value="none">No Shadow</option>
+                        <option value="0 0 10px rgba(0,0,0,0.8)">Soft Black</option>
+                        <option value="0 0 20px #00f3ff">Neon Glow</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Upload Subject</label>
+                <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
+            </div>
+
             <div class="button-group">
-                <button class="btn btn-regen" onclick="randomizeStyle()">REGENERATE VIBE</button>
-                <button class="btn btn-save" onclick="savePoster()">EXPORT POSTER</button>
+                <button class="btn btn-regen" onclick="location.reload()">REGENERATE ALL</button>
+                <button class="btn btn-save" onclick="savePoster()">EXPORT IMAGE</button>
             </div>
         </div>
     </div>
 
     <script>
-        const styles = ['style-sleek', 'style-modern', 'style-impact', 'style-luxury'];
-
         function updateUI() {
-            document.getElementById('display-name').innerText = document.getElementById('inputName').value || "AUSTINE";
-            document.getElementById('display-text').innerText = document.getElementById('inputText').value || "";
-        }
-
-        function applyStyle() {
+            const overlay = document.getElementById('overlay');
+            const dName = document.getElementById('display-name');
+            const dText = document.getElementById('display-text');
             const canvas = document.getElementById('poster-canvas');
-            const selected = document.getElementById('styleSelect').value;
-            canvas.className = ''; 
-            canvas.classList.add(selected);
-        }
 
-        function randomizeStyle() {
-            const current = document.getElementById('styleSelect').value;
-            let available = styles.filter(s => s !== current);
-            const randomStyle = available[Math.floor(Math.random() * available.length)];
-            document.getElementById('styleSelect').value = randomStyle;
-            applyStyle();
+            // Update Text
+            dName.innerText = document.getElementById('inputName').value;
+            dText.innerText = document.getElementById('inputText').value;
+
+            // Update Style & Color
+            dName.style.fontFamily = document.getElementById('fontStyle').value;
+            dName.style.color = document.getElementById('textColor').value;
+            dText.style.fontSize = document.getElementById('fontSize').value + "px";
+            dText.style.textShadow = document.getElementById('shadowStyle').value;
+
+            // Update Layout
+            overlay.style.justifyContent = document.getElementById('textAlign').value;
+            overlay.style.alignItems = document.getElementById('textHAlign').value;
+            dText.style.textAlign = document.getElementById('textHAlign').value === 'center' ? 'center' : (document.getElementById('textHAlign').value === 'flex-start' ? 'left' : 'right');
+
+            // Update Background
+            canvas.style.backgroundColor = document.getElementById('bgColor').value;
         }
 
         function loadImage(event) {
@@ -127,22 +143,14 @@
 
         function savePoster() {
             const poster = document.getElementById('poster-canvas');
-            const btn = document.querySelector('.btn-save');
-            btn.innerText = "CAPTURING...";
-
-            html2canvas(poster, {
-                scale: 3, 
-                useCORS: true,
-                backgroundColor: "#000000"
-            }).then(canvas => {
+            html2canvas(poster, { scale: 3, useCORS: true }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Austine_Creative_Style.png';
+                link.download = 'Austine_Pro_Design.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
-                btn.innerText = "EXPORT POSTER";
             });
         }
     </script>
 </body>
 </html>
-             
+    
