@@ -1,27 +1,105 @@
-function savePoster() {
-    const poster = document.getElementById('poster-canvas');
-    const btn = document.querySelector('.btn-save');
-    btn.innerText = "CAPTURING HD...";
-
-    // Use html2canvas with high-performance settings
-    html2canvas(poster, {
-        scale: 4, // Forces 4K-level detail
-        useCORS: true,
-        logging: false,
-        backgroundColor: null, // Maintains transparency if any
-        imageTimeout: 0,
-        onclone: (clonedDoc) => {
-            // Ensures the image in the clone maintains its quality
-            const clonedImg = clonedDoc.getElementById('bg-image');
-            clonedImg.style.imageRendering = 'crisp-edges';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Austine's Design Suite | Pro HD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Playfair+Display:wght@900&family=Bebas+Neue&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { background: #0b0e11; color: #fff; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1200px; width: 100%; }
+        
+        #poster-canvas { 
+            width: 380px; height: 550px; background: #111; position: relative; 
+            overflow: hidden; border: 2px solid #333; display: flex; flex-direction: column;
         }
-    }).then(canvas => {
-        // Force highest quality PNG format
-        const link = document.createElement('a');
-        link.download = 'Austine_Pro_Design_HD.png';
-        link.href = canvas.toDataURL("image/png", 1.0); // 1.0 = 100% quality
-        link.click();
-        btn.innerText = "EXPORT IMAGE";
-    });
-}
-            
+
+        #bg-image { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; top: 0; left: 0; image-rendering: -webkit-optimize-contrast; }
+        
+        .text-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 30px; z-index: 2; pointer-events: none; }
+
+        .editor { background: #1a1f24; padding: 20px; border-radius: 15px; width: 380px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .editor h2 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .control-group { margin-bottom: 15px; border-bottom: 1px solid #2a2f35; padding-bottom: 10px; }
+        label { display: block; font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-size: 0.85rem; }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; margin-top: 10px; transition: 0.3s; }
+        .btn-save { background: #00f3ff; color: #000; }
+        .btn-regen { background: #fff; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="poster-canvas">
+            <img id="bg-image" src="https://via.placeholder.com/380x550/111/444?text=Upload+Photo" alt="Subject">
+            <div class="text-overlay" id="overlay">
+                <p id="display-name" style="margin:0;">AUSTINE</p>
+                <p id="display-text" style="margin:5px 0 0 0;">DESIGN VISION</p>
+            </div>
+        </div>
+
+        <div class="editor">
+            <h2>AUSTINE DESIGN SUITE</h2>
+            <div class="control-group">
+                <label>Text Content</label>
+                <input type="text" id="inputName" value="AUSTINE" oninput="updateUI()">
+                <textarea id="inputText" oninput="updateUI()" style="margin-top:5px;">DESIGN VISION</textarea>
+            </div>
+            <div class="control-group">
+                <label>Style & Color</label>
+                <select id="fontStyle" onchange="updateUI()">
+                    <option value="'Orbitron', sans-serif">Tech (Orbitron)</option>
+                    <option value="'Bebas Neue', sans-serif">Bold (Bebas)</option>
+                    <option value="'Playfair Display', serif">Classy (Playfair)</option>
+                </select>
+                <input type="color" id="textColor" value="#00f3ff" oninput="updateUI()" style="margin-top:5px;">
+            </div>
+            <div class="control-group">
+                <label>Upload Subject</label>
+                <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
+            </div>
+            <button class="btn btn-save" onclick="savePoster()">EXPORT HD IMAGE</button>
+            <button class="btn btn-regen" onclick="location.reload()">REGENERATE</button>
+        </div>
+    </div>
+
+    <script>
+        function updateUI() {
+            const dName = document.getElementById('display-name');
+            const dText = document.getElementById('display-text');
+            dName.innerText = document.getElementById('inputName').value;
+            dText.innerText = document.getElementById('inputText').value;
+            dName.style.fontFamily = document.getElementById('fontStyle').value;
+            dName.style.color = document.getElementById('textColor').value;
+        }
+
+        function loadImage(event) {
+            const image = document.getElementById('bg-image');
+            if(event.target.files[0]) {
+                image.src = URL.createObjectURL(event.target.files[0]);
+            }
+        }
+
+        function savePoster() {
+            const poster = document.getElementById('poster-canvas');
+            const btn = document.querySelector('.btn-save');
+            btn.innerText = "PROCESSING HD...";
+
+            html2canvas(poster, {
+                scale: 4, // High-quality 4x resolution
+                useCORS: true,
+                backgroundColor: "#000000"
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Austine_Creative_HD.png';
+                link.href = canvas.toDataURL("image/png", 1.0);
+                link.click();
+                btn.innerText = "EXPORT HD IMAGE";
+            });
+        }
+    </script>
+</body>
+</html>
