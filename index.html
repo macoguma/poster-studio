@@ -1,79 +1,123 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Austine's Poster Studio | Pro Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Playfair+Display:ital,wght@1,900&family=Bebas+Neue&family=Montserrat:wght@900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { background: #0b0e11; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1000px; width: 100%; }
+        :root { --accent: #00f3ff; }
+        body { background: #0b0e11; color: #e0e0e0; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1100px; width: 100%; }
         
-        /* THE POSTER BOX - ONLY THIS IS SAVED */
+        /* THE POSTER BOX */
         #poster-canvas { 
             width: 350px; height: 500px; background: #000; position: relative; 
-            overflow: hidden; border: 4px solid #00f3ff; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            overflow: hidden; border: 4px solid #1a1f24; transition: all 0.5s ease;
         }
-        #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 1; top: 0; left: 0; }
-        .text-overlay { 
-            position: absolute; bottom: 0; width: 100%; padding: 40px 20px; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.9)); 
-            text-align: center; z-index: 2; box-sizing: border-box;
-        }
-        #display-name { color: #00f3ff; font-family: 'Orbitron'; font-size: 1.4rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        #display-message { color: #fff; font-size: 1.6rem; font-weight: bold; margin: 10px 0 0 0; line-height: 1.2; }
-
-        /* THE EDITOR SIDEBAR */
-        .editor { background: #1a1f24; padding: 25px; border-radius: 15px; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1.2rem; margin-bottom: 20px; text-align: center; }
-        label { display: block; margin: 15px 0 5px; font-size: 0.8rem; color: #888; font-weight: bold; }
-        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; }
-        input:focus, textarea:focus { border-color: #00f3ff; outline: none; }
+        #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 1; top: 0; left: 0; filter: brightness(0.7); transition: 0.5s; }
         
-        .btn-save { 
-            width: 100%; padding: 15px; background: #00f3ff; color: #000; 
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
-            margin-top: 25px; font-family: 'Orbitron'; transition: 0.3s;
-        }
-        .btn-save:hover { background: #fff; box-shadow: 0 0 15px #00f3ff; transform: translateY(-2px); }
+        .text-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 25px; z-index: 2; box-sizing: border-box; }
+        
+        /* FANCY STYLE 1: CYBERPUNK (Sleek) */
+        .style-sleek #display-name { color: var(--accent); font-family: 'Orbitron'; font-size: 1.1rem; letter-spacing: 4px; text-shadow: 0 0 10px var(--accent); }
+        .style-sleek #display-text { color: #fff; font-family: 'Montserrat'; font-size: 2rem; font-weight: 900; margin-top: 10px; text-transform: uppercase; line-height: 1; }
+        .style-sleek { background: linear-gradient(transparent, rgba(0, 243, 255, 0.25)); }
+
+        /* FANCY STYLE 2: VOGUE (Modern) */
+        .style-modern #display-name { color: #fff; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 6px; border-bottom: 1px solid #fff; padding-bottom: 8px; align-self: center; }
+        .style-modern #display-text { color: #fff; font-family: 'Playfair Display', serif; font-size: 2.6rem; font-style: italic; margin-top: 25px; text-align: center; }
+        .style-modern { background: rgba(0,0,0,0.5); justify-content: center !important; }
+
+        /* FANCY STYLE 3: URBAN (Impact) */
+        .style-impact #display-name { background: #ffcc00; color: #000; font-family: 'Bebas Neue'; font-size: 1.5rem; padding: 0 12px; align-self: flex-start; }
+        .style-impact #display-text { color: #fff; font-family: 'Bebas Neue'; font-size: 4rem; line-height: 0.85; margin-top: 5px; text-align: left; }
+        .style-impact { background: linear-gradient(45deg, rgba(0,0,0,0.8), transparent); }
+
+        /* FANCY STYLE 4: LUXURY (Elegant) */
+        .style-luxury #display-name { color: #d4af37; font-family: 'Montserrat'; font-size: 0.9rem; letter-spacing: 3px; }
+        .style-luxury #display-text { color: #fff; font-family: 'Dancing Script', cursive; font-size: 3rem; margin-top: 10px; }
+        .style-luxury { border: 15px solid #d4af37 !important; box-sizing: border-box; }
+
+        /* EDITOR SIDEBAR */
+        .editor { background: #1a1f24; padding: 25px; border-radius: 20px; width: 350px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        h1 { font-family: 'Orbitron'; color: var(--accent); font-size: 1.1rem; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        label { display: block; margin: 15px 0 5px; font-size: 0.7rem; color: #888; font-weight: 700; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 10px; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
+        
+        .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; font-size: 0.85rem; }
+        .btn-save { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .btn-regen { background: #fff; color: #000; }
+        .btn:hover { transform: scale(1.03); opacity: 0.9; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div id="poster-canvas">
-            <img id="bg-image" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Subject">
-            <div class="text-overlay">
+        <div id="poster-canvas" class="style-sleek">
+            <img id="bg-image" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Main Subject">
+            <div class="text-overlay" id="overlay-container">
                 <p id="display-name">AUSTINE</p>
-                <p id="display-message">HAPPY NEW YEAR 2026</p>
+                <p id="display-text">DESIGN YOUR VISION</p>
             </div>
         </div>
 
         <div class="editor">
             <h1>AUSTINE CREATIVES</h1>
             
-            <label>YOUR NAME</label>
-            <input type="text" id="inputName" value="AUSTINE" placeholder="Enter Name" oninput="updateText()">
+            <label>Name / Branding</label>
+            <input type="text" id="inputName" value="AUSTINE" oninput="updateUI()">
             
-            <label>YOUR MESSAGE</label>
-            <textarea id="inputMessage" placeholder="Enter Message" oninput="updateText()">HAPPY NEW YEAR 2026</textarea>
+            <label>Main Text Content</label>
+            <textarea id="inputText" oninput="updateUI()">DESIGN YOUR VISION</textarea>
+
+            <label>Style Description</label>
+            <textarea id="inputDesc" placeholder="e.g. Minimalist, gold border, high contrast..."></textarea>
+
+            <label>Visual Style</label>
+            <select id="styleSelect" onchange="applyStyle()">
+                <option value="style-sleek">Cyberpunk (Neon Cyan)</option>
+                <option value="style-modern">Vogue (Serif Minimal)</option>
+                <option value="style-impact">Urban (Impact Gold)</option>
+                <option value="style-luxury">Luxury (Gold Border)</option>
+            </select>
             
-            <label>UPLOAD YOUR PHOTO</label>
+            <label>Upload Photo</label>
             <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
             
-            <button class="btn-save" onclick="savePoster()">SAVE IMAGE</button>
+            <div class="button-group">
+                <button class="btn btn-regen" onclick="randomizeStyle()">REGENERATE VIBE</button>
+                <button class="btn btn-save" onclick="savePoster()">EXPORT POSTER</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Synchronize inputs with the poster display
-        function updateText() {
+        const styles = ['style-sleek', 'style-modern', 'style-impact', 'style-luxury'];
+
+        function updateUI() {
             document.getElementById('display-name').innerText = document.getElementById('inputName').value || "AUSTINE";
-            document.getElementById('display-message').innerText = document.getElementById('inputMessage').value || "THE MESSAGE";
+            document.getElementById('display-text').innerText = document.getElementById('inputText').value || "";
         }
 
-        // Preview the uploaded image on the poster
+        function applyStyle() {
+            const canvas = document.getElementById('poster-canvas');
+            const selected = document.getElementById('styleSelect').value;
+            canvas.className = ''; 
+            canvas.classList.add(selected);
+        }
+
+        function randomizeStyle() {
+            const current = document.getElementById('styleSelect').value;
+            let available = styles.filter(s => s !== current);
+            const randomStyle = available[Math.floor(Math.random() * available.length)];
+            document.getElementById('styleSelect').value = randomStyle;
+            applyStyle();
+        }
+
         function loadImage(event) {
             const image = document.getElementById('bg-image');
             if(event.target.files[0]) {
@@ -81,26 +125,24 @@
             }
         }
 
-        // Professional capture of the #poster-canvas element ONLY
         function savePoster() {
             const poster = document.getElementById('poster-canvas');
             const btn = document.querySelector('.btn-save');
             btn.innerText = "CAPTURING...";
 
             html2canvas(poster, {
-                scale: 3, // High-DPI quality
+                scale: 3, 
                 useCORS: true,
-                logging: false,
                 backgroundColor: "#000000"
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Austine_Design_2026.png';
+                link.download = 'Austine_Creative_Style.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
-                btn.innerText = "SAVE IMAGE";
+                btn.innerText = "EXPORT POSTER";
             });
         }
     </script>
 </body>
 </html>
-       
+             
