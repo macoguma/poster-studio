@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,48 +15,51 @@
             width: 350px; height: 500px; background: #000; position: relative; 
             overflow: hidden; border: 4px solid #00f3ff; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
-        #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 1; }
+        #bg-image { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 1; top: 0; left: 0; }
         .text-overlay { 
             position: absolute; bottom: 0; width: 100%; padding: 40px 20px; 
             background: linear-gradient(transparent, rgba(0,0,0,0.9)); 
             text-align: center; z-index: 2; box-sizing: border-box;
         }
-        #display-name { color: #00f3ff; font-family: 'Orbitron'; font-size: 1.2rem; margin: 0; text-transform: uppercase; }
-        #display-message { color: #fff; font-size: 1.8rem; font-weight: bold; margin: 10px 0 0 0; }
+        #display-name { color: #00f3ff; font-family: 'Orbitron'; font-size: 1.4rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        #display-message { color: #fff; font-size: 1.6rem; font-weight: bold; margin: 10px 0 0 0; line-height: 1.2; }
 
         /* THE EDITOR SIDEBAR */
-        .editor { background: #1a1f24; padding: 25px; border-radius: 15px; width: 320px; }
-        h1 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1.2rem; margin-bottom: 20px; }
-        label { display: block; margin: 15px 0 5px; font-size: 0.8rem; color: #888; }
-        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        .editor { background: #1a1f24; padding: 25px; border-radius: 15px; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Orbitron'; color: #00f3ff; font-size: 1.2rem; margin-bottom: 20px; text-align: center; }
+        label { display: block; margin: 15px 0 5px; font-size: 0.8rem; color: #888; font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.9rem; }
+        input:focus, textarea:focus { border-color: #00f3ff; outline: none; }
+        
         .btn-save { 
             width: 100%; padding: 15px; background: #00f3ff; color: #000; 
-            border: none; border-radius: 5px; font-weight: bold; cursor: pointer; 
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
             margin-top: 25px; font-family: 'Orbitron'; transition: 0.3s;
         }
-        .btn-save:hover { background: #fff; box-shadow: 0 0 15px #00f3ff; }
+        .btn-save:hover { background: #fff; box-shadow: 0 0 15px #00f3ff; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="poster-canvas">
-            <img id="bg-image" src="https://via.placeholder.com/350x500/000000/00f3ff?text=Upload+Photo" alt="Subject">
+            <img id="bg-image" src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Subject">
             <div class="text-overlay">
-                <p id="display-name">NAME & TITLE</p>
-                <p id="display-message">THE MESSAGE</p>
+                <p id="display-name">AUSTINE</p>
+                <p id="display-message">HAPPY NEW YEAR 2026</p>
             </div>
         </div>
 
         <div class="editor">
             <h1>AUSTINE CREATIVES</h1>
-            <label>NAME & TITLE</label>
-            <input type="text" id="inputName" placeholder="e.g., AUSTINE" oninput="updateText()">
             
-            <label>THE MESSAGE</label>
-            <textarea id="inputMessage" placeholder="e.g., Happy New Year 2026" oninput="updateText()"></textarea>
+            <label>YOUR NAME</label>
+            <input type="text" id="inputName" value="AUSTINE" placeholder="Enter Name" oninput="updateText()">
             
-            <label>UPLOAD PHOTO</label>
+            <label>YOUR MESSAGE</label>
+            <textarea id="inputMessage" placeholder="Enter Message" oninput="updateText()">HAPPY NEW YEAR 2026</textarea>
+            
+            <label>UPLOAD YOUR PHOTO</label>
             <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
             
             <button class="btn-save" onclick="savePoster()">SAVE IMAGE</button>
@@ -64,31 +67,34 @@
     </div>
 
     <script>
-        // Update text live as you type
+        // Synchronize inputs with the poster display
         function updateText() {
-            document.getElementById('display-name').innerText = document.getElementById('inputName').value || "NAME & TITLE";
+            document.getElementById('display-name').innerText = document.getElementById('inputName').value || "AUSTINE";
             document.getElementById('display-message').innerText = document.getElementById('inputMessage').value || "THE MESSAGE";
         }
 
-        // Handle Image Upload
+        // Preview the uploaded image on the poster
         function loadImage(event) {
             const image = document.getElementById('bg-image');
-            image.src = URL.createObjectURL(event.target.files[0]);
+            if(event.target.files[0]) {
+                image.src = URL.createObjectURL(event.target.files[0]);
+            }
         }
 
-        // THE FIX: Professional extraction of ONLY the poster
+        // Professional capture of the #poster-canvas element ONLY
         function savePoster() {
             const poster = document.getElementById('poster-canvas');
             const btn = document.querySelector('.btn-save');
-            btn.innerText = "PROCESSING...";
+            btn.innerText = "CAPTURING...";
 
             html2canvas(poster, {
-                scale: 3, // High resolution for LinkedIn
+                scale: 3, // High-DPI quality
                 useCORS: true,
-                allowTaint: true
+                logging: false,
+                backgroundColor: "#000000"
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Austine_Creative_Poster.png';
+                link.download = 'Austine_Design_2026.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
                 btn.innerText = "SAVE IMAGE";
@@ -97,5 +103,4 @@
     </script>
 </body>
 </html>
- 
-    
+       
